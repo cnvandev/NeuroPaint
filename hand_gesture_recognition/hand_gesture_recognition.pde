@@ -83,7 +83,9 @@ void draw(){
     bs.loadBlobsFeatures();
     bs.weightBlobs(false);
  
-    displayDiffColorImage();
+    updateDiffColorImage();
+    
+    image(frame, 0, 0);
     drawFingersTips();
   }
 }
@@ -101,7 +103,7 @@ void keyPressed() {
   If you need more speed you can eliminate this
   function, and display the original frame instead.
  */
-void displayDiffColorImage() {
+void updateDiffColorImage() {
   int []fg_pix = FG.pixels;               //set a reference to the foreground image
  
   imgDiff.loadPixels();
@@ -113,8 +115,6 @@ void displayDiffColorImage() {
     }
   }
   imgDiffColor.updatePixels();
- 
-  image(imgDiffColor, 0, 0);             //Display BGS color image(top left)
 }
  
  
@@ -145,11 +145,9 @@ void drawFingersTips() {
    
   tips.updatePixels();
    
-  //now the tips image is created (top right)
-  //let's compute the blobs in it   
+  //now the tips image is created (top right) let's compute the blobs in it   
   bstips.imageFindBlobs(tips);
   bstips.loadBlobsFeatures();
-//  bstips.findCentroids();
   bstips.weightBlobs(false); 
   
   fill(255);
