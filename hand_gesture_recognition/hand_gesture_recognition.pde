@@ -19,8 +19,8 @@ boolean iSetNext = true;
 PFont f;
 PImage tips = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB); 
 PImage imgDiff = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB); 
-PImage  FG = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
-PImage  imgDiffColor = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
+PImage FG = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
+PImage imgDiffColor = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
 
 void setup() {
   size(CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -129,9 +129,9 @@ void doSomethingWithTip(float centerX, float centerY, float tipWidth, float tipH
  */
 void findTips() {
   tips.loadPixels();
-  
-  for (int i = 0; i < CAMERA_WIDTH*CAMERA_HEIGHT; i++)
+  for (int i = 0; i < CAMERA_WIDTH*CAMERA_HEIGHT; i++) {
     tips.pixels[i] = 0xff000000;// Set to black the tips image pixels
+  }
   
   //For each pixels in the BGS image (imgDiff)....
   for (int y =  0; y < CAMERA_HEIGHT; y++) {
@@ -154,5 +154,6 @@ void findTips() {
   for (int i = 0; i < bstips.getBlobsNumber(); i++) {
     if (bstips.getBlobWeight(i) >= TIPS_MASS) 
        doSomethingWithTip(bstips.getBoxCentX(i), bstips.getBoxCentY(i), bstips.getBlobWidth(i), bstips.getBlobHeight(i));
+       break;
   } 
 }
