@@ -55,14 +55,12 @@ void draw(){
     frame.read();
     
     //   BACKGROUND SUBTRACTION  //
-    
     frame.loadPixels();
     FG.loadPixels();
     
-    arrayCopy(frame.pixels,FG.pixels);       //put this into a PImage
+    arrayCopy(frame.pixels, FG.pixels);       //put this into a PImage
    
     FG.updatePixels();
-   
     
     if (iSetNext) {
       pBackground.Set(FG);                    // Set the background image
@@ -73,7 +71,6 @@ void draw(){
     pBackground.PutDifference();              // Put the difference in imgDiff
     imgDiff.updatePixels();
     
-    
     //  FINGER DETECTION   //
     imgDiff.loadPixels();
     fd.setImage(imgDiff);                     // Set hand detection image with BGS image
@@ -83,10 +80,10 @@ void draw(){
     bs.loadBlobsFeatures();
     bs.weightBlobs(false);
  
-    updateDiffColorImage();
+    calculateDiff();
     
     image(frame, 0, 0);
-    drawFingersTips();
+    findTips();
   }
 }
  
@@ -103,7 +100,7 @@ void keyPressed() {
   If you need more speed you can eliminate this
   function, and display the original frame instead.
  */
-void updateDiffColorImage() {
+void calculateDiff() {
   int []fg_pix = FG.pixels;               //set a reference to the foreground image
  
   imgDiff.loadPixels();
@@ -116,7 +113,10 @@ void updateDiffColorImage() {
   }
   imgDiffColor.updatePixels();
 }
- 
+
+void doSomethingWithTip(float centerX, float centerY, float tipWidth, float tipHeight) {
+  ellipse(centerX, centerY, tipWidth, tipHeight);
+} 
  
  /*
    Here many important things happen.  
@@ -127,7 +127,7 @@ void updateDiffColorImage() {
    After that a finger tips image is created based upon
    the search's result data. The image is then scanned for blobs.  
  */
-void drawFingersTips() {
+void findTips() {
   tips.loadPixels();
   
   for (int i = 0; i < CAMERA_WIDTH*CAMERA_HEIGHT; i++)
@@ -153,6 +153,6 @@ void drawFingersTips() {
   fill(255);
   for (int i = 0; i < bstips.getBlobsNumber(); i++) {
     if (bstips.getBlobWeight(i) >= TIPS_MASS) 
-       ellipse(bstips.getBoxCentX(i), bstips.getBoxCentY(i), bstips.getBlobWidth(i), bstips.getBlobHeight(i));
+       doSomethingWithTip(bstips.getBoxCentX(i), bstips.getBoxCentY(i), bstips.getBlobWidth(i), bstips.getBlobHeight(i));
   } 
 }
