@@ -12,6 +12,7 @@ final int HAND_MASS = 600;
 
 final int CAMERA_WIDTH = 320;
 final int CAMERA_HEIGHT = 180;
+final int JUMP_LIMIT = 50;
 
 int iThreshold = 190;
 boolean iSetNext = true;
@@ -21,6 +22,9 @@ PImage tips = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
 PImage imgDiff = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB); 
 PImage FG = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
 PImage imgDiffColor = createImage(CAMERA_WIDTH, CAMERA_HEIGHT, RGB);
+
+float lastX = -1;
+float lastY = -1;
 
 void setup() {
   size(CAMERA_WIDTH, CAMERA_HEIGHT);
@@ -46,8 +50,9 @@ void setup() {
   bs = new Detector(this, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 255);
   bstips = new Detector(this, 0, 0, CAMERA_WIDTH, CAMERA_HEIGHT, 255);
   
-  ellipseMode(CENTER);
-  fill(204, 102, 0);
+  stroke(204, 102, 0);
+  strokeWeight(10);
+  background(255);
 }
  
 void draw(){
@@ -82,7 +87,11 @@ void draw(){
  
     calculateDiff();
     
-    image(frame, 0, 0);
+    // flip using a matrix
+    pushMatrix();
+    scale(-1.0, 1.0);
+    image(frame, -frame.width, 0);
+    popMatrix();
     findTips();
   }
 }
@@ -91,6 +100,7 @@ void draw(){
 // force update of the background model when a key is clicked. 
 void keyPressed() {
   iSetNext=true;
+  background(255);
 }
 
 /*
@@ -115,7 +125,11 @@ void calculateDiff() {
 }
 
 void doSomethingWithTip(float centerX, float centerY, float tipWidth, float tipHeight) {
-  ellipse(centerX, centerY, tipWidth, tipHeight);
+  if (lastX > 0) {
+    ellipse(centerX, centerY, tipWidth, tipHeight);
+  }
+  lastX = centerX;
+  lastY = centerY;
 } 
  
  /*
@@ -150,10 +164,9 @@ void findTips() {
   bstips.loadBlobsFeatures();
   bstips.weightBlobs(false); 
   
-  fill(255);
   for (int i = 0; i < bstips.getBlobsNumber(); i++) {
     if (bstips.getBlobWeight(i) >= TIPS_MASS) 
-       doSomethingWithTip(bstips.getBoxCentX(i), bstips.getBoxCentY(i), bstips.getBlobWidth(i), bstips.getBlobHeight(i));
+       doSomethingWithTip(frame.width - bstips.getBoxCentX(i), bstips.getBoxCentY(i), bstips.getBlobWidth(i), bstips.getBlobHeight(i));
        break;
   } 
 }
